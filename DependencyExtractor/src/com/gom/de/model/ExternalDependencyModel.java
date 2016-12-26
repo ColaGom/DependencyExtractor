@@ -7,13 +7,14 @@ public class ExternalDependencyModel extends DependencyModel {
 	
 	private List<String> relatedList;
 	
-	public ExternalDependencyModel() {
-		super();
+	public ExternalDependencyModel(String fullName) {
+		super(fullName);
 		relatedList = new ArrayList<>();
 	}
 	
 	public void addRelatedList(DependencyModel parent)
 	{
-		relatedList.add(parent.getFullName());
+		if(!relatedList.contains(parent.getFullName()))
+				relatedList.add(parent.getFullName());
 	}
 }

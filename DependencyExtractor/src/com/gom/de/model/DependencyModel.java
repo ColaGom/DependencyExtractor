@@ -1,30 +1,29 @@
 package com.gom.de.model;
 
-public class DependencyModel {
-	
+public class DependencyModel implements Comparable<DependencyModel> {
+
 	private String fullName;
 	private int count;
 	private int relatedLineCount;
-	
-	public DependencyModel() {
-		count = 0;
+
+	public DependencyModel(String fullName) {
+		count = 1;
 		relatedLineCount = 0;
+		this.fullName = fullName;
 	}
-	
-	private void increaseLineCount(int lineCount)
-	{
+
+	public void addLineCount(int lineCount) {
 		relatedLineCount += lineCount;
 	}
-	
-	private int increaseCount()
-	{
+
+	public int increaseCount() {
 		return ++count;
 	}
-	
+
 	public int getRelatedLineCount() {
 		return relatedLineCount;
 	}
-	
+
 	public int getCount() {
 		return count;
 	}
@@ -33,4 +32,17 @@ public class DependencyModel {
 		return fullName;
 	}
 
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	@Override
+	public int compareTo(DependencyModel o) {
+		if (count == o.getCount())
+			return 0;
+		else if (count < o.getCount())
+			return -1;
+		else
+			return 1;
+	}
 }

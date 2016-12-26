@@ -9,11 +9,19 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.gom.de.common.PackageFilter;
 import com.gom.de.common.PathUtils;
+import com.gom.de.common.Utils;
+import com.gom.de.model.DependencyModel;
+import com.gom.de.model.ExternalDependencyModel;
 import com.gom.de.model.ProjectDependencyModel;
 
 public class ProjectDependencyExtractor extends AbstractExtractor<ProjectDependencyModel>
 {
+	PackageFilter filter;
+	public ProjectDependencyExtractor(PackageFilter filter) {
+		this.filter = filter;
+	}
 
 	@Override
 	public void extract(String projectName) {
@@ -36,10 +44,29 @@ public class ProjectDependencyExtractor extends AbstractExtractor<ProjectDepende
 	
 	private void processingJavaFile(ProjectDependencyModel model, File file) throws FileNotFoundException, IOException
 	{
+		int lineCount = Utils.getLineCount(file);
+		model.addTotalLineCount(lineCount);
+		DependencyModel internalModel = new DependencyModel("");
+		
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
-		    	//TODO : processing line
+		    	
+		    	if(line.startsWith("package"))
+		    	{
+		    		internalModel.setFullName(Utils.extractPackageName(line));
+		    		internalModel.addLineCount(lineCount);
+		    		model.addInternalModel(internalModel);
+		    	}
+		    	else if(line.startsWith("import"))
+		    	{
+		    		ExternalDependencyModel externalModel = new ExternalDependencyModel(Utils.extractPackageName(line));
+		    		
+		    		if(filter.invalidationPackage(externalModel.getFullName())){
+			    		externalModel.addLineCount(lineCount);	
+			    		model.addExternalModel(externalModel, internalModel);
+		    		}
+		    	}
 		    }
 		}
 	}
