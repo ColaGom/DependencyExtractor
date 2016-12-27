@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ExternalDependencyModel extends DependencyModel {
 	
-	private List<String> relatedList;
+	private transient List<String>  relatedList;
 	
 	public ExternalDependencyModel(String fullName) {
 		super(fullName);

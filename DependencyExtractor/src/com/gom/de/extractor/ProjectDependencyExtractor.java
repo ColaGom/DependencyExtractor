@@ -52,13 +52,13 @@ public class ProjectDependencyExtractor extends AbstractExtractor<ProjectDepende
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	
-		    	if(line.startsWith("package"))
+		    	if(line.startsWith("package") && !line.matches(".*[${}].*"))
 		    	{
 		    		internalModel.setFullName(Utils.extractPackageName(line));
 		    		internalModel.addLineCount(lineCount);
 		    		model.addInternalModel(internalModel);
 		    	}
-		    	else if(line.startsWith("import"))
+		    	else if(line.startsWith("import") && !line.matches(".*[${}].*"))
 		    	{
 		    		ExternalDependencyModel externalModel = new ExternalDependencyModel(Utils.extractPackageName(line));
 		    		

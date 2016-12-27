@@ -59,6 +59,7 @@ public class ExtractRunnable implements Runnable, CallBack<ProjectDependencyMode
 	private void onFinished()
 	{
 		Collections.sort(dependencyList);
+		Collections.reverse(dependencyList);
 		
 //		GsonBuilder gson = new GsonBuilder();
 //		gson.registerTypeAdapter(ProjectDependencyModel.class, new ProjectDependencySerializer()).setPrettyPrinting();
@@ -88,24 +89,150 @@ public class ExtractRunnable implements Runnable, CallBack<ProjectDependencyMode
 //			}
 			System.out.println("progess : " + (++current) + "/" + dependencyList.size());
 		}
-		
-		//TODO : 내림차순으로 정렬하고 다시할것. 현재 오름차순.
 
-		List<ProjectDependencyCompareModel> compareList = new ArrayList<>();
-		for(int i = 0 ; i < 100 ; ++i)
-		{
-			Random rand = new Random();
-			int a = rand.nextInt(100);
-			int b = rand.nextInt(100);
-			
-			while(b == a)
-			{
-				b = rand.nextInt(100);
-			}
-			System.out.println("a : " + a + " b : " + b);
-			compareList.add(new ProjectDependencyCompareModel(dependencyList.get(a), dependencyList.get(b)));
-		}
 		
+		compareOverlapPackage(300);
+		compareOverlapPackage(200);
+		compareOverlapPackage(100);
+		compareOverlapPackage(50);
+		compareOverlapPackage(10);
+		//TODO : 내림차순으로 정렬하고 다시할것. 현재 오름차순.
+//
+//		List<ProjectDependencyCompareModel> compareList = new ArrayList<>();
+//		
+//		for(int i = 0 ; i < 300 ; ++i)
+//		{
+//			for(int j = i+1 ; j < 300 ; ++j)
+//			{
+//				compareList.add(new ProjectDependencyCompareModel(dependencyList.get(i), dependencyList.get(j)));
+//			}
+//		}
+//
+//		GsonBuilder gson = new GsonBuilder();
+//		gson.registerTypeAdapter(ProjectDependencyCompareModel.class, new ProjectDependencyCompareSerializer()).setPrettyPrinting();
+//		Gson parser = gson.create();
+//		
+//		float totalAvg = 0;
+//		
+//		for(ProjectDependencyCompareModel data:compareList)
+//		{
+//			totalAvg += data.getOverlapCount();
+//		}
+//		
+//		totalAvg /= 300;
+//		
+//		try(PrintWriter out = new PrintWriter(PathUtils.getResultPath("random_compare_300.json")))
+//		{
+//			out.println("avg : " + totalAvg);
+//			
+//			for(ProjectDependencyCompareModel data:compareList)
+//			{
+//				out.println(parser.toJson(data));
+//			}
+//			
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+		
+//		List<ProjectDependencyCompareModel> compareList = new ArrayList<>();
+//		for(int i = 0 ; i < 100 ; ++i)
+//		{
+//			Random rand = new Random();
+//			int a = rand.nextInt(100);
+//			int b = rand.nextInt(100);
+//			
+//			while(b == a)
+//			{
+//				b = rand.nextInt(100);
+//			}
+//			System.out.println("a : " + a + " b : " + b);
+//			compareList.add(new ProjectDependencyCompareModel(dependencyList.get(a), dependencyList.get(b)));
+//		}
+//		
+//		List<ProjectDependencyCompareModel> compareList200 = new ArrayList<>();
+//		for(int i = 0 ; i < 200 ; ++i)
+//		{
+//			Random rand = new Random();
+//			int a = rand.nextInt(200);
+//			int b = rand.nextInt(200);
+//			
+//			while(b == a)
+//			{
+//				b = rand.nextInt(100);
+//			}
+//			System.out.println("a : " + a + " b : " + b);
+//			compareList200.add(new ProjectDependencyCompareModel(dependencyList.get(a), dependencyList.get(b)));
+//		}
+//		
+//		GsonBuilder gson = new GsonBuilder();
+//		gson.registerTypeAdapter(ProjectDependencyCompareModel.class, new ProjectDependencyCompareSerializer()).setPrettyPrinting();
+//		Gson parser = gson.create();
+//		
+//		float totalAvg = 0;
+//		
+//		for(ProjectDependencyCompareModel data:compareList)
+//		{
+//			totalAvg += data.getOverlapCount();
+//		}
+//		
+//		totalAvg /= compareList.size();
+//		
+//		try(PrintWriter out = new PrintWriter(PathUtils.getResultPath("random_compare_100.json")))
+//		{
+//			out.println("avg : " + totalAvg);
+//			
+//			for(ProjectDependencyCompareModel data:compareList)
+//			{
+//				out.println(parser.toJson(data));
+//			}
+//			
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		totalAvg = 0;
+//		
+//		for(ProjectDependencyCompareModel data:compareList200)
+//		{
+//			totalAvg += data.getOverlapCount();
+//		}
+//		
+//		totalAvg /= compareList200.size();
+//		
+//		try(PrintWriter out = new PrintWriter(PathUtils.getResultPath("random_compare_200.json")))
+//		{
+//			out.println("avg : " + totalAvg);
+//			
+//			for(ProjectDependencyCompareModel data:compareList200)
+//			{
+//				out.println(parser.toJson(data));
+//			}
+//			
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+		
+		System.out.println("onFinished");
+	}
+
+	@Override
+	public void onFinishedExtract(ProjectDependencyModel result) {
+		result.sort();
+		dependencyList.add(result);
+	}
+	
+	private void compareOverlapPackage(int rank)
+	{
+		List<ProjectDependencyCompareModel> compareList = new ArrayList<>();
+		
+		for(int i = 0 ; i < rank ; ++i)
+		{
+			for(int j = i+1 ; j < rank ; ++j)
+			{
+				compareList.add(new ProjectDependencyCompareModel(dependencyList.get(i), dependencyList.get(j)));
+			}
+		}
+
 		GsonBuilder gson = new GsonBuilder();
 		gson.registerTypeAdapter(ProjectDependencyCompareModel.class, new ProjectDependencyCompareSerializer()).setPrettyPrinting();
 		Gson parser = gson.create();
@@ -119,7 +246,7 @@ public class ExtractRunnable implements Runnable, CallBack<ProjectDependencyMode
 		
 		totalAvg /= compareList.size();
 		
-		try(PrintWriter out = new PrintWriter(PathUtils.getResultPath("random_compare_100.json")))
+		try(PrintWriter out = new PrintWriter(PathUtils.getResultPath("random_compare_"+rank+".json")))
 		{
 			out.println("avg : " + totalAvg);
 			
@@ -131,13 +258,5 @@ public class ExtractRunnable implements Runnable, CallBack<ProjectDependencyMode
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("onFinished");
-	}
-
-	@Override
-	public void onFinishedExtract(ProjectDependencyModel result) {
-		result.sort();
-		dependencyList.add(result);
 	}
 }

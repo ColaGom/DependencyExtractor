@@ -2,6 +2,7 @@ package com.gom.de.common;
 
 public class Main {
 	public static void main(String[] args) {
+
 		new Thread(new ExtractRunnable()).start();
 		
 //		try
